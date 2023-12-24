@@ -97,14 +97,10 @@ let graph = new Graph()
 
 renderer.bindTo('#body')
 renderer.setViewport(innerWidth, innerHeight)
-renderer.add({
-  render(ctx) {
-    graph.draw(ctx)
-  }
-})
+
 renderer.play()
 
-for (let i = 0; i < 6; i++) {
+for (let i = 0; i < 60; i++) {
   const node = new Node()
 
   node.position.set(rand(0, renderer.width), rand(0, renderer.height))
@@ -124,5 +120,17 @@ for (let i = 0; i < graph.nodes.length; i++) {
   }
 
 }
+renderer.add({
+  render(ctx) {
+    graph.draw(ctx)
+  }
+})
 
-console.log(graph)
+console.log(findShortPath(graph.nodes,graph.nodes[0],graph.nodes[0],graph.nodes[graph.nodes.length - 1]))
+
+function findShortPath(nodes,start,end){
+  const path = []
+  
+  return path
+}
+
