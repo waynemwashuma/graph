@@ -1,5 +1,7 @@
 import { Renderer2D, Vector2, circle, rand } from "./chaos.module.js"
 
+const maxIteration = 10000;
+
 class Path {
   /**
    * @type { Node } 
@@ -32,6 +34,10 @@ class Node {
    * @type { Vector2 } 
    */
   position = new Vector2()
+  /**
+   * @type { boolean } 
+   */
+  explored = false
   constructor() {
 
   }
@@ -43,14 +49,13 @@ class Node {
     this.paths.push(path)
   }
   /**
-   * @param {CanvasRenderingContext2D} ctx
+   * @param {Node} node
    */
-  draw(ctx) {
-
-
-
-    
-
+  hasPathTo(node) {
+    for (var k = 0; k < this.paths.length; k++) {
+      if (this.paths[k].to === node) return true
+    }
+    return false
   }
 }
 class Graph {
@@ -67,21 +72,20 @@ class Graph {
   draw(ctx) {
     ctx.beginPath()
     ctx.lineWidth = 7
+    ctx.strokeStyle = "rgba(0.5,0.5,0.5,0.5)"
     this.nodes.forEach(e => {
       e.paths.forEach(p => {
         ctx.moveTo(...p.from.position)
         ctx.lineTo(...p.to.position)
       })
-      ctx.strokeStyle = "green"
-      ctx.stroke()
     })
+    ctx.stroke()
     ctx.closePath()
     this.nodes.forEach(e => {
-      ctx.beginPath()
+      ctx.moveTo(...e.position)
       circle(ctx, ...e.position, 10)
       ctx.fillStyle = "black"
       ctx.fill()
-      ctx.closePath()
     })
   }
   /**
@@ -100,10 +104,13 @@ renderer.setViewport(innerWidth, innerHeight)
 
 renderer.play()
 
-for (let i = 0; i < 60; i++) {
+for (let i = 0; i < 10; i++) {
   const node = new Node()
 
-  node.position.set(rand(0, renderer.width), rand(0, renderer.height))
+  node.position.set(
+    rand(0, renderer.width),
+    rand(0, renderer.height)
+  )
 
   graph.add(node)
 }
@@ -113,24 +120,79 @@ for (let i = 0; i < graph.nodes.length; i++) {
 
   for (let j = 0; j < graph.nodes.length; j++) {
     const to = graph.nodes[j]
-
-    if (to === node) continue
-
-    node.pathTo(to)
+    if (
+      node !== to &&
+      !node.hasPathTo(to) &&
+      rand() >= 0.5
+    ) {
+      node.pathTo(to)
+      to.pathTo(node)
+    }
   }
-
 }
+const start = graph.nodes[0]
+const end = graph.nodes[graph.nodes.length - 1]
+const shortPath = findShortPathNaive(start, end)
+
+
+
 renderer.add({
   render(ctx) {
     graph.draw(ctx)
+    ctx.beginPath()
+    ctx.lineWidth = 7
+    ctx.strokeStyle = "cyan"
+    shortPath.forEach(p => {
+      ctx.moveTo(...p.from.position)
+      ctx.lineTo(...p.to.position)
+    })
+    ctx.stroke()
+    ctx.closePath()
+    ctx.closePath()
+    ctx.moveTo(...end.position)
+    circle(ctx, ...start.position, 15)
+    ctx.fillStyle = "red"
+    ctx.fill()
+    ctx.closePath()
+    ctx.beginPath()
+    ctx.moveTo(...end.position)
+    circle(ctx, ...end.position, 15)
+    ctx.fillStyle = "green"
+    ctx.fill()
+    ctx.closePath()
   }
 })
+renderer.pause()
+renderer.update()
+console.log(shortPath.length);
 
-console.log(findShortPath(graph.nodes,graph.nodes[0],graph.nodes[0],graph.nodes[graph.nodes.length - 1]))
+/**
+ * @param {Node} start
+ * @param {Node} end
+ */
+function findShortPathNaive(start, end,explored = [],path = [],depth = maxIteration) {
+  let current = start
+  for (let i = depth; i > 0; i--) {
+    explored.push(current)
+    current.explored = true
+    let shortestpath = null
+    for (let i = 0; i < current.paths.length; i++) {
+      let path = current.paths[i]
+      if (!shortestpath && !path.to.explored)
+        shortestpath = path
+      if (shortestpath && path.distance < shortestpath.distance &&
+        !path.to.explored
+      )
+        shortestpath = path
+    }
+    if (!shortestpath) continue
+    path.push(shortestpath)
+    current = shortestpath.to
+    if (current === end) break
+  }
+  explored.forEach(e => {
+    e.explored = false
+  }) /***/
 
-function findShortPath(nodes,start,end){
-  const path = []
-  
   return path
 }
-
