@@ -142,7 +142,7 @@ renderer.add({
     ctx.beginPath()
     ctx.lineWidth = 7
     ctx.strokeStyle = "cyan"
-    shortPath.forEach(p => {
+    shortPath?.forEach(p => {
       ctx.moveTo(...p.from.position)
       ctx.lineTo(...p.to.position)
     })
@@ -164,35 +164,30 @@ renderer.add({
 })
 renderer.pause()
 renderer.update()
-console.log(shortPath.length);
-
+console.log(shortPath);
 /**
  * @param {Node} start
  * @param {Node} end
+ * @returns {Path[] | null}
  */
-function findShortPathNaive(start, end,explored = [],path = [],depth = maxIteration) {
-  let current = start
-  for (let i = depth; i > 0; i--) {
-    explored.push(current)
-    current.explored = true
-    let shortestpath = null
-    for (let i = 0; i < current.paths.length; i++) {
-      let path = current.paths[i]
-      if (!shortestpath && !path.to.explored)
-        shortestpath = path
-      if (shortestpath && path.distance < shortestpath.distance &&
-        !path.to.explored
-      )
-        shortestpath = path
-    }
-    if (!shortestpath) continue
-    path.push(shortestpath)
-    current = shortestpath.to
-    if (current === end) break
+function findShortPathNaive(start, end,depth = 100,explored = []) {
+  if(depth < 0)return []
+  explored.push(start)
+  start.explored = true
+  let shortestpath = null
+  for (let i = 0; i < start.paths.length; i++) {
+    const path = start.paths[i]
+    if (!shortestpath && !path.to.explored)
+      shortestpath = path
+    if (shortestpath && path.distance < shortestpath.distance &&
+      !path.to.explored
+    )
+      shortestpath = path
   }
-  explored.forEach(e => {
-    e.explored = false
-  }) /***/
-
-  return path
+  if (!shortestpath) return null
+  const next = shortestpath.to
+  if(next === end)return [shortestpath]
+  const results = findShortPathNaive(next,end,--depth,explored)
+  if(results == void 0)return findShortPathNaive(start,end,--depth,explored)
+  return [shortestpath].concat(results)
 }
