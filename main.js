@@ -1,28 +1,10 @@
-import { Renderer2D, Vector2, circle, rand } from "./chaos.module.js"
+import { Renderer2D, Vector2, circle, rand, Utils } from "./chaos.module.js"
 
 const maxIteration = 10000;
 
-class Path {
-  /**
-   * @type { Node } 
-   */
-  to = null
-  /**
-   * @type { Node } 
-   */
-  from = null
-  /**
-   * @param {Node} node
-   * @param {Node} node
-   */
-  constructor(to, from) {
-    this.to = to
-    this.from = from
-  }
-}
 class Node {
   /**
-   * @type { Path[] } 
+   * @type { Node[] } 
    */
   paths = []
   /**
@@ -39,21 +21,23 @@ class Node {
   /**
    * @param {Node} node
    */
-  pathTo(node) {
-    let path = new Path(node, this)
-    this.paths.push(path)
+  pathTo(node, added = false) {
+    this.paths.push(node)
+    if (!added) node.pathTo(this, true)
   }
   /**
    * @param {Node} node
    */
   hasPathTo(node) {
     for (var k = 0; k < this.paths.length; k++) {
-      if (this.paths[k].to === node) return true
+      if (this.paths[k] === node) return true
     }
     return false
   }
-  removePathTo(node,removed = false){
-    
+  removePathTo(node, removed = false) {
+    if(!this.hasPathTo(node))return
+    Utils.removeElement(this.paths, this.paths.indexOf(node))
+    if (!removed) node.removePathTo(this, true)
   }
 }
 class Graph {
@@ -73,8 +57,8 @@ class Graph {
     ctx.strokeStyle = "rgba(0.5,0.5,0.5,0.5)"
     this.nodes.forEach(e => {
       e.paths.forEach(p => {
-        ctx.moveTo(...p.from.position)
-        ctx.lineTo(...p.to.position)
+        ctx.moveTo(...e.position)
+        ctx.lineTo(...p.position)
       })
     })
     ctx.stroke()
@@ -105,11 +89,13 @@ renderer.add({
     ctx.beginPath()
     ctx.lineWidth = 7
     ctx.strokeStyle = "cyan"
-    ctx.moveTo(...shortPath[0].position)
-    shortPath.forEach(p => {
-      ctx.lineTo(...p.position)
-      console.log(p);
-    })
+    if (shortPath) {
+      ctx.moveTo(...shortPath[0].position)
+      shortPath.forEach(p => {
+        ctx.lineTo(...p.position)
+      })
+    }
+
     ctx.stroke()
     ctx.closePath()
     ctx.beginPath()
@@ -126,7 +112,7 @@ renderer.add({
     ctx.closePath()
   }
 })
-generateRandomNodes(graph, 10, renderer.width, renderer.height)
+generateRandomNodes(graph, 20, renderer.width, renderer.height)
 
 const start = graph.nodes[0]
 const end = graph.nodes[graph.nodes.length - 1]
@@ -145,23 +131,22 @@ function generateRandomNodes(graph, number, width, height) {
 
     graph.add(node)
   }
-  if (graph.nodes[0]
-    .hasPathTo(graph.nodes[graph.nodes.length - 1]))
-    for (let i = 0; i < graph.nodes.length; i++) {
-      const node = graph.nodes[i]
 
-      for (let j = 0; j < graph.nodes.length; j++) {
-        const to = graph.nodes[j]
-        if (
-          node !== to &&
-          !node.hasPathTo(to) &&
-          rand() >= 0.5
-        ) {
-          node.pathTo(to)
-          to.pathTo(node)
-        }
+  for (let i = 0; i < graph.nodes.length; i++) {
+    const node = graph.nodes[i]
+
+    for (let j = 0; j < graph.nodes.length; j++) {
+      const to = graph.nodes[j]
+      if (
+        node !== to &&
+        !node.hasPathTo(to) &&
+        rand() >= 0.5
+      ) {
+        node.pathTo(to)
       }
     }
+  }
+ graph.nodes[0].removePathTo(graph.nodes[graph.nodes.length - 1])
 }
 /**
  * @param {Node} start
@@ -174,7 +159,7 @@ function findShortPath(start, end, depth = 100, heuristic = distanceHeuristic, e
   start.explored = true
   const shortestpath = heuristic(start.paths, start, end)
   if (!shortestpath) return null
-  const next = shortestpath.to
+  const next = shortestpath
   if (next === end) return [start, next]
   const results = findShortPath(next, end, --depth, heuristic, explored)
   if (results == void 0) return findShortPath(start, end, --depth, heuristic, explored)
@@ -191,16 +176,16 @@ function distanceHeuristic(paths, start, end) {
     const path = paths[i]
     const dist = new Vector2()
       .copy(end.position)
-      .sub(path.to.position)
+      .sub(path.position)
       .magnitudeSquared()
-    if (!shortest && !path.to.explored) {
+    if (!shortest && !path.explored) {
       shortest = path
       distance = dist
     }
     if (
       shortest &&
       dist < distance &&
-      !path.to.explored
+      !path.explored
     ) {
       shortest = path
       distance = dist
@@ -216,21 +201,21 @@ function directionHeuristic(paths, start, end) {
   for (let i = 0; i < paths.length; i++) {
     const path = paths[i]
     const dir = new Vector2()
-      .copy(path.to.position)
-      .sub(path.from.position)
+      .copy(path.position)
+      .sub(start.position)
       .normalize()
     const absdir = new Vector2()
       .copy(end.position)
-      .sub(path.from.position)
+      .sub(start.position)
       .normalize()
     const product = dir.dot(absdir)
-    if (!shortest && !path.to.explored) {
+    if (!shortest && !path.explored) {
       shortest = path
       dotprod = product
     }
 
     if (
-      shortest && !path.to.explored &&
+      shortest && !pat.explored &&
       ptoduct > dotprod
     ) {
       shortest = path
@@ -240,3 +225,4 @@ function directionHeuristic(paths, start, end) {
   return shortest
 
 }
+console.log(graph);
