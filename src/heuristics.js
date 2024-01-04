@@ -46,7 +46,7 @@ export function directionHeuristic(paths, start, end) {
     }
 
     if (
-      shortest && !pat.explored &&
+      shortest && !path.explored &&
       ptoduct > dotprod
     ) {
       shortest = path

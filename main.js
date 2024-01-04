@@ -6,6 +6,12 @@ let graph = new Graph()
 
 renderer.bindTo('#body')
 renderer.setViewport(innerWidth, innerHeight)
+generateRandomNodes(graph, 60, renderer.width, renderer.height, 0.8)
+
+const start = graph.nodes[0]
+const end = graph.nodes[graph.nodes.length - 1]
+const shortPath = findShortPath(start, end)
+
 renderer.add({
   render(ctx) {
     ctx.beginPath()
@@ -51,14 +57,6 @@ renderer.add({
     ctx.closePath()
   }
 })
-generateRandomNodes(graph, 60, renderer.width, renderer.height, 0.8)
-
-const start = graph.nodes[0]
-const end = graph.nodes[graph.nodes.length - 1]
-
-const time = performance.now()
-const shortPath = findShortPath(start, end)
-console.log(performance.now() - time)
 renderer.update()
 
 function generateRandomNodes(graph, number, width, height, probs = 0.5) {
@@ -90,4 +88,4 @@ function generateRandomNodes(graph, number, width, height, probs = 0.5) {
   graph.nodes[0].removePathTo(graph.nodes[graph.nodes.length - 1])
 }
 
-console.log(graph);
+console.log(graph)

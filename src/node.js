@@ -1,5 +1,6 @@
 import { Vector2, Utils } from "../chaos.module.js"
-
+/**
+*/
 export class Node {
   /**
    * @type { Node[] } 
@@ -36,5 +37,11 @@ export class Node {
     if (!this.hasPathTo(node)) return
     Utils.removeElement(this.paths, this.paths.indexOf(node))
     if (!removed) node.removePathTo(this, true)
+  }
+  fromJson(obj){
+    this.position.fromJson(obj)
+  }
+  toJson(){
+    return this.position.toJson()
   }
 }
