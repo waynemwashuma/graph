@@ -18,15 +18,15 @@ renderer.add({
     ctx.strokeStyle = "rgba(0.5,0.5,0.5,0.5)"
     graph.nodes.forEach(e => {
       e.paths.forEach(p => {
-        ctx.moveTo(...e.position)
-        ctx.lineTo(...p.position)
+        ctx.moveTo(...e.value)
+        ctx.lineTo(...p.value)
       })
     })
     ctx.stroke()
     ctx.closePath()
     graph.nodes.forEach(e => {
-      ctx.moveTo(...e.position)
-      circle(ctx, ...e.position, 10)
+      ctx.moveTo(...e.value)
+      circle(ctx, ...e.value, 10)
       ctx.fillStyle = "black"
       ctx.fill()
     })
@@ -34,23 +34,23 @@ renderer.add({
     ctx.lineWidth = 7
     ctx.strokeStyle = "cyan"
     if (shortPath) {
-      ctx.moveTo(...shortPath[0].position)
+      ctx.moveTo(...shortPath[0].value)
       shortPath.forEach(p => {
-        ctx.lineTo(...p.position)
+        ctx.lineTo(...p.value)
       })
     }
 
     ctx.stroke()
     ctx.closePath()
     ctx.beginPath()
-    ctx.moveTo(...end.position)
-    circle(ctx, ...start.position, 15)
+    ctx.moveTo(...end.value)
+    circle(ctx, ...start.value, 15)
     ctx.fillStyle = "green"
     ctx.fill()
     ctx.closePath()
     ctx.beginPath()
-    ctx.moveTo(...end.position)
-    circle(ctx, ...end.position, 15)
+    ctx.moveTo(...end.value)
+    circle(ctx, ...end.value, 15)
     ctx.fillStyle = "red"
     ctx.fill()
     ctx.closePath()
@@ -65,7 +65,7 @@ function generateRandomNodes(graph, number, width, height, probs = 0.5) {
   for (let i = 0; i < number; i++) {
     const node = new Node(new Vector2())
 
-    node.position.set(
+    node.value.set(
       rand(0, width),
       rand(0, height)
     )

@@ -10,7 +10,7 @@ export class Node {
   /**
    * @type { T } 
    */
-  position = null
+  value = null
   /**
    * @type { boolean } 
    */
@@ -19,7 +19,7 @@ export class Node {
    * @param {T} obj
   */
   constructor(obj) {
-    this.position = obj
+    this.value = obj
   }
   /**
    * @param {Node<T>} node
@@ -48,9 +48,9 @@ export class Node {
     if (!removed) node.removePathTo(this, true)
   }
   fromJson(obj) {
-    this.position.fromJson(obj)
+    this.value.fromJson(obj)
   }
   toJson() {
-    return this.position.toJson()
+    return this.value.toJson()
   }
 }
