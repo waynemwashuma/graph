@@ -1,31 +1,36 @@
 import { Vector2, Utils } from "../chaos.module.js"
 /**
-*/
+ * @template T
+ */
 export class Node {
   /**
-   * @type { Node[] } 
+   * @type { Node<T>[] } 
    */
   paths = []
   /**
-   * @type { Vector2 } 
+   * @type { T } 
    */
-  position = new Vector2()
+  position = null
   /**
    * @type { boolean } 
    */
   explored = false
-  constructor() {
-
+  /**
+   * @param {T} obj
+  */
+  constructor(obj) {
+    this.position = obj
   }
   /**
-   * @param {Node} node
+   * @param {Node<T>} node
    */
   pathTo(node, added = false) {
+    if(this.hasPathTo(node) || this === node)return
     this.paths.push(node)
     if (!added) node.pathTo(this, true)
   }
   /**
-   * @param {Node} node
+   * @param {Node<T>} node
    */
   hasPathTo(node) {
     for (var k = 0; k < this.paths.length; k++) {
@@ -33,15 +38,19 @@ export class Node {
     }
     return false
   }
+  /**
+   * @param {Node<T>} node
+   * @param {boolean} removed
+   */
   removePathTo(node, removed = false) {
     if (!this.hasPathTo(node)) return
     Utils.removeElement(this.paths, this.paths.indexOf(node))
     if (!removed) node.removePathTo(this, true)
   }
-  fromJson(obj){
+  fromJson(obj) {
     this.position.fromJson(obj)
   }
-  toJson(){
+  toJson() {
     return this.position.toJson()
   }
 }

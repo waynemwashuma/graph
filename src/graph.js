@@ -1,15 +1,29 @@
 import { Node } from "./node.js"
+import { Vector2 } from "../chaos.module.js"
 
+/**
+ * @template T
+ */
 export class Graph {
   /**
-   * @type { Node[] } 
+   * @type { Node<T>[] } 
    */
   nodes = []
+  /**
+   * @type {number}
+   */
   connections = []
   /**
-   * @param {Function} constructorFunction Constructor function of the template
+   * @private
+   * @type {()=> T}
   */
-  constructor(constructorFunction) {}
+  _create = null
+  /**
+   * @param { ()=> T } constructorFunction Constructor function of the template
+   */
+  constructor(constructorFunction) {
+    this._create = constructorFunction
+  }
   /**
    * @param { Node } node
    */
@@ -21,8 +35,9 @@ export class Graph {
    * @param { number } start index of the second node
    */
   connectNodes(start, end) {
+    console.log(start,end)
     this.connections.push([start, end])
-    this.nodes[start].addPathTo(this.nodes[end])
+    this.nodes[start].pathTo(this.nodes[end])
   }
   toJson() {
     const obj = {
@@ -36,7 +51,7 @@ export class Graph {
   }
   fromJson(obj) {
     obj.nodes.forEach(n => {
-      let node = new Node()
+      let node = new Node(this._create())
       node.fromJson(n)
       this.nodes.push(node)
     })

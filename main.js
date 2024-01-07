@@ -2,12 +2,11 @@ import { Renderer2D, Vector2, circle, rand } from "./chaos.module.js"
 import { Graph, Node, findShortPath } from "./src/index.js"
 
 let renderer = new Renderer2D()
-let graph = new Graph()
+let graph = new Graph(()=>new Vector2())
 
 renderer.bindTo('#body')
 renderer.setViewport(innerWidth, innerHeight)
 generateRandomNodes(graph, 60, renderer.width, renderer.height, 0.8)
-
 const start = graph.nodes[0]
 const end = graph.nodes[graph.nodes.length - 1]
 const shortPath = findShortPath(start, end)
@@ -46,22 +45,25 @@ renderer.add({
     ctx.beginPath()
     ctx.moveTo(...end.position)
     circle(ctx, ...start.position, 15)
-    ctx.fillStyle = "red"
+    ctx.fillStyle = "green"
     ctx.fill()
     ctx.closePath()
     ctx.beginPath()
     ctx.moveTo(...end.position)
     circle(ctx, ...end.position, 15)
-    ctx.fillStyle = "green"
+    ctx.fillStyle = "red"
     ctx.fill()
     ctx.closePath()
   }
 })
 renderer.update()
 
+/**
+ * @param {Graph} graph
+*/
 function generateRandomNodes(graph, number, width, height, probs = 0.5) {
   for (let i = 0; i < number; i++) {
-    const node = new Node()
+    const node = new Node(new Vector2())
 
     node.position.set(
       rand(0, width),
@@ -72,16 +74,12 @@ function generateRandomNodes(graph, number, width, height, probs = 0.5) {
   }
 
   for (let i = 0; i < graph.nodes.length; i++) {
-    const node = graph.nodes[i]
-
     for (let j = 0; j < graph.nodes.length; j++) {
-      const to = graph.nodes[j]
       if (
-        node !== to &&
-        !node.hasPathTo(to) &&
+        i !== j &&
         rand() >= probs
       ) {
-        node.pathTo(to)
+        graph.connectNodes(i,j)
       }
     }
   }
