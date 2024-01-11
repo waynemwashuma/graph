@@ -1,4 +1,4 @@
-import { Vector2, Utils } from "../chaos.module.js"
+import { Utils } from "../chaos.module.js"
 /**
  * @template T
  */

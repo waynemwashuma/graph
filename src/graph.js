@@ -2,6 +2,7 @@ import { Node } from "./node.js"
 import { Vector2 } from "../chaos.module.js"
 
 /**
+ * 
  * @template T
  */
 export class Graph {
@@ -15,17 +16,18 @@ export class Graph {
   connections = []
   /**
    * @private
-   * @type {()=> T}
+   * @type {()=> T }
   */
   _create = null
   /**
+   * @template T
    * @param { ()=> T } constructorFunction Constructor function of the template
    */
   constructor(constructorFunction) {
     this._create = constructorFunction
   }
   /**
-   * @param { Node } node
+   * @param { Node<T> } node
    */
   add(node) {
     this.nodes.push(node)

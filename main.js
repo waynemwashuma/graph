@@ -2,6 +2,7 @@ import { Renderer2D, Vector2, circle, rand } from "./chaos.module.js"
 import { Graph, Node, findShortPath } from "./src/index.js"
 
 let renderer = new Renderer2D()
+/**@type {Graph<Vector2>}*/
 let graph = new Graph(()=>new Vector2())
 
 renderer.bindTo('#body')

@@ -1,14 +1,14 @@
-import {distanceHeuristic} from "./heuristics.js"
+import { distanceHeuristic } from "./heuristics.js"
 /**
- * @param {Node} start
- * @param {Node} end
+ * @param {Node<Vector2>} start
+ * @param {Node<Vector2>} end
  * @param {number} [depth]
  * @param {typeof distanceHeuristic} [heuristic]
- * @param {Node[]} [explored]
+ * @param {Node<Vector2>[]} [explored]
  * 
- * @returns {Node[] | null}
+ * @returns {Node<Vector2>[] | null}
  */
-export function findShortPath(start, end, depth = 100, heuristic = distanceHeuristic, explored = []) {
+export function findShortPath(start, end, depth = 1000000, heuristic = distanceHeuristic, explored = []) {
   if (depth < 0) return [start]
   explored.push(start)
   start.explored = true

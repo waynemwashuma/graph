@@ -1,6 +1,10 @@
 import { Vector2 } from "../chaos.module.js"
 
-
+/**
+ * @param {Node<Vector2>[]} paths
+ * @param {Node<Vector2>} start
+ * @param {Node<Vector2>} end
+*/
 export function distanceHeuristic(paths, start, end) {
   let shortest = null
   let distance = Infinity
@@ -26,7 +30,11 @@ export function distanceHeuristic(paths, start, end) {
   }
   return shortest
 }
-
+/**
+ * @param {Node<Vector2>[]} paths
+ * @param {Node<Vector2>} start
+ * @param {Node<Vector2>} end
+*/
 export function directionHeuristic(paths, start, end) {
   let shortest = null
   let dotprod = -Infinity
