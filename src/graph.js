@@ -11,7 +11,7 @@ export class Graph {
    */
   nodes = []
   /**
-   * @type {number}
+   * @type {number[][]}
    */
   connections = []
   /**
