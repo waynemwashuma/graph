@@ -11,51 +11,16 @@ export class Graph {
    */
   nodes = []
   /**
-   * @type {number[][]}
+   * @param { T } obj
    */
-  connections = []
-  /**
-   * @private
-   * @type {()=> T }
-  */
-  _create = null
-  /**
-   * @template T
-   * @param { ()=> T } constructorFunction Constructor function of the template
-   */
-  constructor(constructorFunction) {
-    this._create = constructorFunction
-  }
-  /**
-   * @param { Node<T> } node
-   */
-  add(node) {
-    this.nodes.push(node)
+  add(obj) {
+    return this.nodes.push(new Node(obj)) - 1
   }
   /**
    * @param { number } start index of the first node
    * @param { number } start index of the second node
    */
   connectNodes(start, end) {
-    console.log(start,end)
-    this.connections.push([start, end])
     this.nodes[start].pathTo(this.nodes[end])
-  }
-  toJson() {
-    const obj = {
-      nodes: [],
-      connections: this.connections
-    }
-    this.nodes.forEach(c => {
-      obj.nodes.push(c.toJson())
-    })
-    return obj
-  }
-  fromJson(obj) {
-    obj.nodes.forEach(n => {
-      let node = new Node(this._create())
-      node.fromJson(n)
-      this.nodes.push(node)
-    })
   }
 }
