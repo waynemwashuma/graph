@@ -19,6 +19,13 @@ export class Graph {
     return this.nodes.push(new Node(obj)) - 1
   }
   /**
+   * @param {number} index
+   * @returns {T}
+  */
+  get(index){
+    return this.nodes[index].value
+  }
+  /**
    * @param { number } index The index of the node to remove.
    */
   remove(index) {
