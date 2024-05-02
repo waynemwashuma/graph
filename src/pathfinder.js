@@ -1,6 +1,10 @@
 import { distanceHeuristic } from "./heuristics.js"
 
 /**
+ * NOTE: The start and end should have at least one valid path otherwise a stackoverflow error will occur.
+ * 
+ * @todo - This actually isnt A*,instead of only taking the best,sort possible paths in a priority queue.
+ * 
  * @param {Node<Vector2>} start
  * @param {Node<Vector2>} end
  * @param {typeof distanceHeuristic} [heuristic]
@@ -10,28 +14,30 @@ import { distanceHeuristic } from "./heuristics.js"
  * 
  * @returns {Node<Vector2>[] | null}
  */
-export function findShortPath(start, end, heuristic = distanceHeuristic, path = [], explored = []) {
-  explored.push(start)
-  start.explored = true
+export function AStarSearch(start, end, heuristic = distanceHeuristic, path = [], explored = []) {
 
-  let next = start.paths[0]
-  let bestcost = heuristic(next, end, start)
-  for (let i = 1; i < start.paths.length; i++) {
-    const current = start.paths[i]
-    const cost = heuristic(current, end, start)
-    if (
-      cost < bestcost &&
-      !current.explored
-    ) {
-      next = current
-      bestcost = cost
+  const stack = [start]
+  while (stack.length) {
+    const node = stack.pop()
+    explored.push(node)
+    start.explored = true
+    let next = node.paths[0]
+    let bestcost = heuristic(next, end, node)
+    for (let i = 1; i < node.paths.length; i++) {
+      const current = node.paths[i]
+      const cost = heuristic(current, end, node)
+
+      if (cost < bestcost && !current.explored) {
+        next = current
+        bestcost = cost
+      }
     }
+    if (next === end) {
+      path.push(node, next)
+      break
+    }
+    path.push(node)
+    stack.push(next)
   }
-  if (next === end) {
-    path.push(start, next)
-    return path
-  }
-  findShortPath(next, end, heuristic, path, explored)
-  path.unshift(start)
   return path
 }
