@@ -25,6 +25,9 @@ export class Graph {
   get(index){
     return this.nodes[index].value
   }
+  getNode(index){
+    return this.nodes[index]
+  }
   /**
    * @param { number } index The index of the node to remove.
    */
