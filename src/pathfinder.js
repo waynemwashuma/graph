@@ -14,9 +14,11 @@ import { distanceHeuristic } from "./heuristics.js"
  * 
  * @returns {Node<Vector2>[] | null}
  */
-export function AStarSearch(start, end, heuristic = distanceHeuristic, path = [], explored = []) {
-
+export function AStarSearch(start, end, heuristic = distanceHeuristic) {
+  const explored = []
+  const path = []
   const stack = [start]
+  
   while (stack.length) {
     const node = stack.pop()
     explored.push(node)

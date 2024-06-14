@@ -80,11 +80,11 @@ function generateRandomNodes(graph, number, width, height) {
         i !== j &&
         rand() >= 0.4
       ) {
-        graph.connectNodes(i, j)
+        graph.biconnect(i, j)
       }
     }
   }
-  graph.disconnectNodes(0,graph.size() - 1)
+  graph.bidisconnect(0,graph.size() - 1)
 }
 /**
  * @param {Graph} graph
@@ -108,21 +108,21 @@ function generateBoxedNodes(graph, width, height, num, offset = new Vector2()) {
   }
   for (let x = 0; x < num.x - 1; x++) {
     for (let y = 0; y < num.y - 1; y++) {
-      graph.connectNodes(
+      graph.biconnect(
         x + y * num.x,
         x + (y + 1) * num.x
       )
-      graph.connectNodes(
+      graph.biconnect(
         x + y * num.x,
         x + y * num.x + 1
       )
     }
   }
   for (let x = (num.y - 1) * (num.x); x < num.y * num.x - 1; x++) {
-    graph.connectNodes(x, x + 1)
+    graph.biconnect(x, x + 1)
   }
   for (let y = num.y - 1; y < num.y * num.x - num.x; y += num.y) {
-    graph.connectNodes(
+    graph.biconnect(
       y,
       y + num.y
     )
@@ -151,28 +151,28 @@ function generateDiagonalBoxedNodes(graph, width, height, num, offset = new Vect
   }
   for (let x = 0; x < num.x - 1; x++) {
     for (let y = 0; y < num.y - 1; y++) {
-      graph.connectNodes(
+      graph.biconnect(
         x + y * num.x,
         x + (y + 1) * num.x
       )
-      graph.connectNodes(
+      graph.biconnect(
         x + y * num.x,
         x + y * num.x + 1
       )
     }
   }
   for (let x = (num.y - 1) * (num.x); x < num.y * num.x - 1; x++) {
-    graph.connectNodes(x, x + 1)
+    graph.biconnect(x, x + 1)
   }
   for (let y = num.y - 1; y < num.y * num.x - num.x; y += num.y) {
-    graph.connectNodes(
+    graph.biconnect(
       y,
       y + num.y
     )
   }
   for (let x = 0; x < num.x - 1; x++) {
     for (let y = 0; y < num.y - 1; y++) {
-      graph.connectNodes(
+      graph.biconnect(
         x + y * num.x,
         x + (y + 1) * num.x + 1
       )
