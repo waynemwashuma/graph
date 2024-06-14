@@ -15,21 +15,20 @@ import { distanceHeuristic } from "./heuristics.js"
  * @returns {Node<Vector2>[] | null}
  */
 export function AStarSearch(start, end, heuristic = distanceHeuristic) {
-  const explored = []
+  const explored = new Set()
   const path = []
   const stack = [start]
-  
+
   while (stack.length) {
     const node = stack.pop()
-    explored.push(node)
-    start.explored = true
+    explored.add(node)
     let next = node.paths[0]
     let bestcost = heuristic(next, end, node)
     for (let i = 1; i < node.paths.length; i++) {
       const current = node.paths[i]
       const cost = heuristic(current, end, node)
 
-      if (cost < bestcost && !current.explored) {
+      if (cost < bestcost && !explored.has(current)) {
         next = current
         bestcost = cost
       }
