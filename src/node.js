@@ -11,10 +11,6 @@ export class Node {
    */
   value = null
   /**
-   * @type { boolean } 
-   */
-  explored = false
-  /**
    * @param {T} obj
   */
   constructor(obj) {
